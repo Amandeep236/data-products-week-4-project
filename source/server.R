@@ -1,31 +1,47 @@
 library(shiny)
 library(ggplot2)
+library(caret)
+library(randomForest)
 
-function(input, output) {
-  
-  dataset <- reactive({
-    diamonds[sample(nrow(diamonds), input$sampleSize),]
-  })
-  
-  output$plot <- renderPlot({
-    
-    p <- ggplot(dataset(), aes_string(x=input$x, y=input$y)) + geom_point()
-    
-    if (input$color != 'None')
-      p <- p + aes_string(color=input$color)
-    
-    facets <- paste(input$facet_row, '~', input$facet_col)
-    if (facets != '. ~ .')
-      p <- p + facet_grid(facets)
-    
-    if (input$jitter)
-      p <- p + geom_jitter()
-    if (input$smooth)
-      p <- p + geom_smooth()
-    
-    print(p)
-    
-  }, height=700)
-  
-}
+#
+# Defines the Random Forest model and predictor for 'mpg' in the 'mtcars' dataset.
+#
+source(file = "modelBuilding.R")
 
+#
+# Setting up Shiny Server
+#
+shinyServer(
+
+  function(input, output, session) {
+    
+    # To show new lines in the browser
+    decoratedDataStructure <- paste0(dataStructure, collapse = "<br/>")
+    output$dataStructure <- renderText({decoratedDataStructure})
+    
+    # Builds "reactively" the prediction.
+    predictMpg <- reactive({
+
+      carToPredict <- data.frame(
+        cyl = input$cyl, 
+        disp = input$disp, 
+        hp = input$hp, 
+        drat = input$drat, 
+        wt = input$wt, 
+        qsec = input$qsec, 
+        vs = as.numeric(input$vs), 
+        am = as.numeric(input$am), 
+        gear = input$gear, 
+        carb = input$carb)
+      
+      randomForestPredictor(carsRandomForestModelBuilder(), carToPredict)
+      
+    })
+  
+    output$prediction <- renderTable({
+      predictMpg()
+    })
+    
+  }
+
+)
