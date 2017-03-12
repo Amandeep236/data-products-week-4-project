@@ -2,7 +2,7 @@ library(caret)
 library(randomForest)
 
 #
-# Setting up for Random Forest classifier.
+# Setting up for Random Forest predictor.
 #
 
 # Initializing data. 'mtcars' dataset is used. 
@@ -42,7 +42,6 @@ randomForestPredictor <- function(model, parameters) {
      newdata = parameters
   )
   
-  #return(renderText(levels(iris$Species)[prediction]))
   return(prediction)
 
 }

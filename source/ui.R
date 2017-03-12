@@ -152,6 +152,10 @@ shinyUI(
              
       h3("Developing Data Products course - Assignment Week 4 - Shiny Application and Reproducible Pitch"),
       
+      h3("Author: Gaston Dario Napoli - March, 2017"),
+      
+      br(),
+      
       p("This application shows an example of making a web application using R and ",
         a(href = "https://shiny.rstudio.com/", "Shiny library"),
         "together, corresponding to the assigment of the week 4,",
